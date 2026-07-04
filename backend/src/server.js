@@ -1,15 +1,17 @@
-import express from "express";
 import dotenv from "dotenv";
-import authRouter from "./routes/auth.route.js";
-import messageRouter from "./routes/message.route.js";
+import express from "express";
 import path from "path";
 import { connect_db } from "./lib/db.connect.js";
+import authRouter from "./routes/auth.route.js";
+import messageRouter from "./routes/message.route.js";
 
 dotenv.config();
 const app = express();
 const __dirname = path.resolve();
 
 const PORT = process.env.PORT || 3000;
+
+app.use(express.json())
 
 app.use("/api/auth", authRouter);
 app.use("/api/messages", messageRouter);
@@ -26,6 +28,7 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-app.listen(PORT, connect_db(), () => {
+app.listen(PORT, () => {
   console.log(`Server running on ${PORT}`);
+  connect_db()
 });

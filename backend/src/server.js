@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import authRouter from "./routes/auth.route.js";
 import messageRouter from "./routes/message.route.js";
 import path from "path";
+import { connect_db } from "./lib/db.connect.js";
 
 dotenv.config();
 const app = express();
@@ -25,6 +26,6 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-app.listen(PORT, () => {
+app.listen(PORT, connect_db(), () => {
   console.log(`Server running on ${PORT}`);
 });

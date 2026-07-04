@@ -20,7 +20,7 @@ if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
   // Serve index.html for all non-API routes
-  app.get("/{*splat}", (req, res) => {
+  app.get("/{*splat}", (_, res) => {
     res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
   });
 }

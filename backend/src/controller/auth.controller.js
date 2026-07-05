@@ -2,21 +2,23 @@ import bcrypt from "bcryptjs";
 import { generateToken } from "../lib/util.js";
 import User from "../models/User.js";
 export const signup = async (req, res) => {
-    const { fullName, email, password } = await req.body;
+  const { fullName, email, password } = await req.body;
   try {
-    if (!fullName ||!email || !password) {
-      return res.status(400).json({message:"All fields are required"})
+    if (!fullName || !email || !password) {
+      return res.status(400).json({ message: "All fields are required" });
     }
     if (password.length < 8) {
-      return res.status(400).json({message:"Password must be at least 8 characters"})
+      return res
+        .status(400)
+        .json({ message: "Password must be at least 8 characters" });
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return res.status(400).json({message:"Invalid Email"})
+      return res.status(400).json({ message: "Invalid Email" });
     }
     const user = await User.findOne({ email: email });
     if (user) {
-     return  res.status(400).json({message:"Email already exist"})
+      return res.status(400).json({ message: "Email already exist" });
     }
     // hash password
     const salt = await bcrypt.genSalt(10);
@@ -24,22 +26,22 @@ export const signup = async (req, res) => {
     const newUser = new User({
       fullName,
       email,
-      password:hashPassword
-    })
+      password: hashPassword,
+    });
     if (newUser) {
-      generateToken(newUser._id, res);
       await newUser.save();
+      generateToken(newUser._id, res);
       res.status(201).json({
         _id: newUser._id,
         fullName: newUser.fullName,
         email: newUser.email,
-        profilePic:newUser.profilePic
-      })
+        profilePic: newUser.profilePic,
+      });
     } else {
-      res.status(400).json({message:"Invalid userdata"})
+      res.status(400).json({ message: "Invalid userdata" });
     }
-  } catch(err) {
+  } catch (err) {
     console.error("Error in signup controller:", err);
-    res.status(500).json({message:"Internal Server Error"})
-   }
-}
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};

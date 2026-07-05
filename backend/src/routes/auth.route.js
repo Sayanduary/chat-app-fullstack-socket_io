@@ -10,4 +10,3 @@ router.get("/api/auth/logout", (req, res) => {
 });
 
 export default router;
-x

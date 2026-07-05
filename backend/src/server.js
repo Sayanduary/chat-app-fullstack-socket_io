@@ -4,21 +4,22 @@ import path from "path";
 import { connect_db } from "./lib/db.connect.js";
 import authRouter from "./routes/auth.route.js";
 import messageRouter from "./routes/message.route.js";
+import { ENV } from "../env.js";
 
 dotenv.config();
 const app = express();
 const __dirname = path.resolve();
 
-const PORT = process.env.PORT || 3000;
+const PORT = ENV.PORT || 3000;
 
-app.use(express.json())
+app.use(express.json());
 
 app.use("/api/auth", authRouter);
 app.use("/api/messages", messageRouter);
 
 // make ready for development
 
-if (process.env.NODE_ENV === "production") {
+if (ENV.NODE_ENV === "production") {
   // Serve frontend assets
   app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
@@ -30,5 +31,5 @@ if (process.env.NODE_ENV === "production") {
 
 app.listen(PORT, () => {
   console.log(`Server running on ${PORT}`);
-  connect_db()
+  connect_db();
 });

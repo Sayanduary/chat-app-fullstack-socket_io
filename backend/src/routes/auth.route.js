@@ -1,4 +1,5 @@
 import express from "express";
+import { auth } from "../middleware/authentication.js";
 import {
   login,
   logout,

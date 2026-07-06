@@ -1,11 +1,11 @@
+import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import express from "express";
 import path from "path";
-import cookieParser from "cookie-parser";
-import { connect_db } from "./lib/db.connect.js";
+import { ENV } from "../env.js";
+import { connect_db } from "./lib/db.configure.js";
 import authRouter from "./routes/auth.route.js";
 import messageRouter from "./routes/message.route.js";
-import { ENV } from "../env.js";
 
 dotenv.config();
 const app = express();

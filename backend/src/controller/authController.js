@@ -1,9 +1,9 @@
 import bcrypt from "bcryptjs";
-import { generateToken } from "../lib/util.js";
-import User from "../models/User.js";
-import { sendWelcomeEmail } from "../emails/email.handler.js";
 import { ENV } from "../../env.js";
-import cloudinary from "../lib/cloudinary.js";
+import { sendWelcomeEmail } from "../emails/email.handler.js";
+import cloudinary from "../lib/cloudinary.configure.js";
+import { generateToken } from "../lib/jwtToken.configure.js";
+import User from "../models/User.js";
 
 export const signup = async (req, res) => {
   const { fullName, email, password } = await req.body;
@@ -58,6 +58,7 @@ export const signup = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
 export const login = async (req, res) => {
   const { email, password } = req.body;
 
@@ -100,6 +101,7 @@ export const login = async (req, res) => {
     });
   }
 };
+
 export const logout = async (req, res) => {
   res.cookie("jwt", "", { maxAge: 0 });
   res.status(200).json({ message: "user logged out succesfully" });

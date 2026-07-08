@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/Sayanduary/chat-app-fullstack-socket_io/issues"
   },
-  "homepage": "https://github.com/Sayanduary/chat-app-fullstack-socket_io#readme"
+  "homepage": "https://github.com/Sayanduary/chat-app-fullstack-socket_io#readme",
+  "dependencies": {
+    "crypto": "^1.0.1"
+  }
 }

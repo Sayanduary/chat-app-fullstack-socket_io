@@ -17,14 +17,12 @@ const SignUpPage = () => {
     password: "",
   });
 
-  const { isSigniningUp } = useAuthStore();
+  const { isSigningUp, signup } = useAuthStore();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    console.log(formData);
+    await signup(formData);
   };
-
   return (
     <div className="flex w-full items-center justify-center p-4">
       <div className="relative w-full max-w-md">
@@ -112,10 +110,10 @@ const SignUpPage = () => {
               {/* Submit Button */}
               <button
                 type="submit"
-                disabled={isSigniningUp}
+                disabled={isSigningUp}
                 className="w-full rounded-lg bg-cyan-600 py-3 font-semibold text-white transition hover:bg-cyan-700 cursor-pointer"
               >
-                {isSigniningUp ? (
+                {isSigningUp ? (
                   <LoaderIcon className="w-full h-5 animate-spin text-center" />
                 ) : (
                   " Create Account"

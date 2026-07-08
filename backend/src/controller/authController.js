@@ -6,56 +6,76 @@ import { generateToken } from "../lib/jwtToken.configure.js";
 import User from "../models/User.js";
 
 export const signup = async (req, res) => {
-  const { fullName, email, password } = await req.body;
   try {
+    const { fullName, email, password } = req.body;
+
+    // Validation
     if (!fullName || !email || !password) {
-      return res.status(400).json({ message: "All fields are required" });
+      return res.status(400).json({
+        message: "All fields are required",
+      });
     }
+
     if (password.length < 8) {
-      return res
-        .status(400)
-        .json({ message: "Password must be at least 8 characters" });
+      return res.status(400).json({
+        message: "Password must be at least 8 characters",
+      });
     }
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
     if (!emailRegex.test(email)) {
-      return res.status(400).json({ message: "Invalid Email" });
+      return res.status(400).json({
+        message: "Invalid email address",
+      });
     }
-    const user = await User.findOne({ email: email });
-    if (user) {
-      return res.status(400).json({ message: "Email already exist" });
+
+    // Check existing user
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+      return res.status(400).json({
+        message: "Email already exists",
+      });
     }
-    // hash password
+
+    // Hash password
     const salt = await bcrypt.genSalt(10);
-    const hashPassword = await bcrypt.hash(password, salt);
-    const newUser = new User({
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // Create user
+    const savedUser = await User.create({
       fullName,
       email,
-      password: hashPassword,
+      password: hashedPassword,
     });
-    if (newUser) {
-      const savedUser = await newUser.save();
-      generateToken(newUser._id, res);
-      return res.status(201).json({
-        _id: newUser._id,
-        fullName: newUser.fullName,
-        email: newUser.email,
-        profilePic: newUser.profilePic,
-      });
-      try {
-        await sendWelcomeEmail(
-          savedUser.email,
-          savedUser.fullName,
-          ENV.CLIEsNT_URL,
-        );
-      } catch (error) {
-        console.log("failed to send welcome email", error);
-      }
-    } else {
-      res.status(400).json({ message: "Invalid userdata" });
+
+    // Generate JWT Cookie
+    generateToken(savedUser._id, res);
+
+    // Send welcome email (don't fail signup if email fails)
+    try {
+      await sendWelcomeEmail(
+        savedUser.email,
+        savedUser.fullName,
+        savedUser.email,
+      );
+    } catch (emailError) {
+      console.error("Failed to send welcome email:", emailError);
     }
-  } catch (err) {
-    console.error("Error in signup controller:", err);
-    res.status(500).json({ message: "Internal Server Error" });
+
+    return res.status(201).json({
+      _id: savedUser._id,
+      fullName: savedUser.fullName,
+      email: savedUser.email,
+      profilePic: savedUser.profilePic,
+    });
+  } catch (error) {
+    console.error("Signup Error:", error);
+
+    return res.status(500).json({
+      message: "Internal Server Error",
+    });
   }
 };
 

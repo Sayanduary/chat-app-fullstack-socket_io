@@ -7,7 +7,7 @@ import NoConversationPlaceholder from "../components/NoConversationPlaceholder";
 import ProfileHeader from "../components/ProfileHeader";
 import { useChatStore } from "../store/useChatStore";
 const ChatPage = () => {
-  const { activeTab, selectedUser } = useChatStore();
+  const { activeTab, selectedUsers } = useChatStore();
 
   return (
     <div className="h-screen w-screen p-4">
@@ -24,7 +24,7 @@ const ChatPage = () => {
               border-r
               border-white/10
 
-              bg-white/[0.03]
+              bg-white/3
               backdrop-blur-3xl
             "
           >
@@ -47,8 +47,7 @@ const ChatPage = () => {
               min-w-0
               flex-1
               flex-col
-
-              bg-white/[0.015]
+             bg-white/1.5
               backdrop-blur-3xl
             "
           >
@@ -57,7 +56,11 @@ const ChatPage = () => {
             </div>
 
             <div className="relative flex h-full flex-1">
-              {selectedUser ? <ChatContainer /> : <NoConversationPlaceholder />}
+              {selectedUsers ? (
+                <ChatContainer />
+              ) : (
+                <NoConversationPlaceholder />
+              )}
             </div>
           </main>
         </div>

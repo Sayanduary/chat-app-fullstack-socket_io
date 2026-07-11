@@ -75,7 +75,9 @@ class RingtoneManager {
             o1.disconnect();
             o2.disconnect();
             g.disconnect();
-          } catch (e) {}
+          } catch (e) {
+            console.log(e);
+          }
         }, 2200);
       };
       beep();
@@ -121,7 +123,9 @@ class RingtoneManager {
                 o.stop();
                 o.disconnect();
                 g.disconnect();
-              } catch (e) {}
+              } catch (e) {
+                console.log(e);
+              }
             },
             (delay + 0.5) * 1000,
           );
@@ -245,6 +249,7 @@ function buildPeerConnection({
         pc.restartIce();
       } catch (err) {
         onFatalFailure?.();
+        console.log(err);
       }
     }
   };
@@ -262,7 +267,9 @@ function buildPeerConnection({
     pc.onnegotiationneeded = null;
     try {
       pc.close();
-    } catch (e) {}
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   return { pc, remoteMediaStream, cleanup };

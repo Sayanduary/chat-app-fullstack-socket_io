@@ -163,41 +163,43 @@ const VideoCallManager = () => {
         <div className="relative w-full h-full max-w-6xl rounded-3xl overflow-hidden bg-black shadow-2xl flex flex-col items-center justify-center">
           {/* Remote Video (Fullscreen inside container) */}
           <div className="absolute inset-0 flex items-center justify-center bg-slate-950">
-            {remoteStream ? (
-              <video
-                ref={remoteVideoRef}
-                autoPlay
-                playsInline
-                className="w-full h-full object-cover"
+            {/* Connecting placeholder overlay */}
+            <div className={`absolute inset-0 flex flex-col items-center justify-center bg-slate-950 text-center px-4 z-10 transition-opacity duration-300 ${
+              remoteStream ? "opacity-0 pointer-events-none" : "opacity-100 pointer-events-auto"
+            }`}>
+              <img
+                src={getSafeImageSrc(callerInfo.profilePic)}
+                alt={callerInfo.fullName}
+                className="w-24 h-24 rounded-full object-cover border-2 border-white/20 mb-4 animate-pulse"
               />
-            ) : (
-              <div className="flex flex-col items-center text-center px-4">
-                <img
-                  src={getSafeImageSrc(callerInfo.profilePic)}
-                  alt={callerInfo.fullName}
-                  className="w-24 h-24 rounded-full object-cover border-2 border-white/20 mb-4 animate-pulse"
-                />
-                <p className="text-slate-400 text-sm animate-pulse">Connecting video stream...</p>
-              </div>
-            )}
+              <p className="text-slate-400 text-sm animate-pulse">Connecting video stream...</p>
+            </div>
+
+            <video
+              ref={remoteVideoRef}
+              autoPlay
+              playsInline
+              className="w-full h-full object-cover"
+            />
           </div>
 
           {/* Local Video (Floating overlay on top right) */}
           <div className="absolute top-4 right-4 w-32 h-44 sm:w-44 sm:h-60 rounded-2xl overflow-hidden border border-white/20 shadow-2xl z-20 bg-slate-900">
-            {isCameraOff ? (
-              <div className="w-full h-full flex flex-col items-center justify-center bg-slate-800 text-slate-400 p-2 text-center">
-                <VideoOff className="w-8 h-8 mb-2" />
-                <span className="text-[10px] sm:text-xs">Camera Off</span>
-              </div>
-            ) : (
-              <video
-                ref={localVideoRef}
-                autoPlay
-                playsInline
-                muted
-                className="w-full h-full object-cover scale-x-[-1]" // Mirror local stream
-              />
-            )}
+            {/* Camera Off Placeholder Overlay */}
+            <div className={`absolute inset-0 flex flex-col items-center justify-center bg-slate-800 text-slate-400 p-2 text-center z-10 transition-opacity duration-300 ${
+              isCameraOff ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+            }`}>
+              <VideoOff className="w-8 h-8 mb-2" />
+              <span className="text-[10px] sm:text-xs">Camera Off</span>
+            </div>
+
+            <video
+              ref={localVideoRef}
+              autoPlay
+              playsInline
+              muted
+              className="w-full h-full object-cover scale-x-[-1]" // Mirror local stream
+            />
           </div>
 
           {/* Floating Caller Name Overlay (Top Left) */}

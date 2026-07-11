@@ -95,7 +95,26 @@ export const getChatPartners = async (req, res) => {
     ];
     const chatPartners = await User.find({
       _id: { $in: chatPartnersIds },
-    }).select("-password");
+    }).select("-password").lean();
+
+    // Fetch the last message for each partner
+    for (let partner of chatPartners) {
+      const lastMsg = await Message.findOne({
+        $or: [
+          { senderId: loggedInUser, receiverId: partner._id },
+          { senderId: partner._id, receiverId: loggedInUser },
+        ],
+      }).sort({ createdAt: -1 });
+      partner.lastMessage = lastMsg;
+    }
+
+    // Sort partners by the timestamp of their last message
+    chatPartners.sort((a, b) => {
+      const timeA = a.lastMessage ? new Date(a.lastMessage.createdAt).getTime() : 0;
+      const timeB = b.lastMessage ? new Date(b.lastMessage.createdAt).getTime() : 0;
+      return timeB - timeA;
+    });
+
     res.status(200).json(chatPartners);
   } catch (error) {
     console.log("error in fetching chat partners", error);

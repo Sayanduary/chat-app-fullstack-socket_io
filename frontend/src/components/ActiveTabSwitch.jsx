@@ -5,7 +5,7 @@ const ActiveTabSwitch = () => {
   const { activeTab, setActiveTab } = useChatStore();
 
   return (
-    <div className="mx-4 mt-4 rounded-2xl border border-white/10 bg-white/[0.03] p-1 backdrop-blur-xl">
+    <div className="mx-4 mt-4 rounded-2xl border border-white/10 bg-white/[0.04] p-1 backdrop-blur-2xl shadow-[0_16px_40px_rgba(0,0,0,0.22)]">
       <div className="grid grid-cols-2 gap-1">
         <button
           onClick={() => setActiveTab("chats")}
@@ -19,14 +19,14 @@ const ActiveTabSwitch = () => {
             ${
               activeTab === "chats"
                 ? `
-                  bg-cyan-500/15
-                  text-cyan-300
+                  bg-cyan-500/12
+                  text-cyan-200
                   border border-cyan-400/20
-                  shadow-[0_0_20px_rgba(34,211,238,.12)]
+                  shadow-[0_0_24px_rgba(34,211,238,.12)]
                 `
                 : `
                   text-slate-400
-                  hover:bg-white/4
+                  hover:bg-white/[0.05]
                   hover:text-white
                 `
             }
@@ -48,14 +48,14 @@ const ActiveTabSwitch = () => {
             ${
               activeTab === "contacts"
                 ? `
-                  bg-cyan-500/15
-                  text-cyan-300
+                  bg-cyan-500/12
+                  text-cyan-200
                   border border-cyan-400/20
-                  shadow-[0_0_20px_rgba(34,211,238,.12)]
+                  shadow-[0_0_24px_rgba(34,211,238,.12)]
                 `
                 : `
                   text-slate-400
-                  hover:bg-white/[0.04]
+                  hover:bg-white/[0.05]
                   hover:text-white
                 `
             }

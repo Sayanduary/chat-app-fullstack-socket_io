@@ -76,7 +76,7 @@ const ContactList = () => {
               />
 
               {isOnline && (
-                <span className="absolute bottom-0 right-0 h-3.5 w-3.5 rounded-full border-2 border-[#05070A] bg-emerald-400 shadow-[0_0_10px_rgba(74,222,128,.8)]" />
+                <span className="absolute bottom-0 right-0 h-3.5 w-3.5 rounded-full border-2 border-[#05070a] bg-emerald-400 shadow-[0_0_10px_rgba(74,222,128,.8)]" />
               )}
             </div>
 

@@ -27,10 +27,12 @@ const LoginPage = () => {
     <div className="flex w-full items-center justify-center p-4">
       <div className="relative w-full max-w-md">
         <BorderAnimatedContainer>
-          <div className="w-full p-8">
+          <div className="w-full bg-white/[0.02] p-8 backdrop-blur-3xl sm:p-10">
             {/* Heading */}
             <div className="mb-8 text-center">
-              <MessageCircleIcon className="mx-auto mb-4 h-12 w-12 text-cyan-400" />
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-cyan-400/20 bg-cyan-500/10 shadow-[0_0_30px_rgba(34,211,238,0.14)]">
+                <MessageCircleIcon className="h-7 w-7 text-cyan-300" />
+              </div>
 
               <h1 className="mb-2 text-3xl font-bold text-white">
                 Welcome Back
@@ -89,7 +91,7 @@ const LoginPage = () => {
               <button
                 type="submit"
                 disabled={isLoggingIn}
-                className="flex w-full items-center justify-center rounded-xl bg-cyan-500 py-3 font-semibold text-white transition-all duration-300 hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-60"
+                className="auth-btn flex items-center justify-center disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {isLoggingIn ? (
                   <>
@@ -107,7 +109,7 @@ const LoginPage = () => {
               Don't have an account?{" "}
               <Link
                 to="/signup"
-                className="font-semibold text-cyan-400 transition hover:text-cyan-300"
+                className="font-semibold text-cyan-300 transition hover:text-cyan-200"
               >
                 Create Account
               </Link>

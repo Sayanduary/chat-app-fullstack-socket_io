@@ -79,15 +79,15 @@ const ChatContainer = () => {
                   <div
                     className={`max-w-[75%] rounded-2xl px-4 py-3 shadow-lg ${
                       isSender
-                        ? "rounded-br-md bg-cyan-500 text-white"
-                        : "rounded-bl-md border border-slate-700 bg-slate-800 text-slate-100"
+                        ? "rounded-br-md border border-cyan-400/20 bg-gradient-to-br from-slate-800 to-slate-900 text-white shadow-[0_16px_40px_rgba(34,211,238,0.14)]"
+                        : "rounded-bl-md border border-white/10 bg-white/[0.04] text-slate-100 shadow-[0_12px_32px_rgba(0,0,0,0.22)]"
                     }`}
                   >
                     {message.image && (
                       <img
                         src={message.image}
                         alt="attachment"
-                        className="mb-2 max-w-xs rounded-xl"
+                        className="mb-2 max-w-xs rounded-2xl border border-white/10"
                       />
                     )}
 
@@ -99,7 +99,7 @@ const ChatContainer = () => {
 
                     <div
                       className={`mt-2 text-[11px] ${
-                        isSender ? "text-cyan-100" : "text-slate-400"
+                        isSender ? "text-white-800/90" : "text-slate-400"
                       }`}
                     >
                       {new Date(message.createdAt).toLocaleString([], {

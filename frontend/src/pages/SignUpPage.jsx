@@ -27,12 +27,14 @@ const SignUpPage = () => {
     <div className="flex w-full items-center justify-center p-4">
       <div className="relative w-full max-w-md">
         <BorderAnimatedContainer>
-          <div className="w-full p-8">
+          <div className="w-full bg-white/[0.02] p-8 backdrop-blur-3xl sm:p-10">
             {/* Heading */}
             <div className="mb-8 text-center">
-              <MessageCircleIcon className="mx-auto mb-4 h-12 w-12 text-slate-400" />
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04] shadow-[0_0_30px_rgba(255,255,255,0.04)]">
+                <MessageCircleIcon className="h-7 w-7 text-cyan-300" />
+              </div>
 
-              <h2 className="mb-2 text-2xl font-bold text-slate-200">
+              <h2 className="mb-2 text-2xl font-bold text-slate-100">
                 Create Account
               </h2>
 
@@ -111,10 +113,10 @@ const SignUpPage = () => {
               <button
                 type="submit"
                 disabled={isSigningUp}
-                className="w-full rounded-lg bg-cyan-600 py-3 font-semibold text-white transition hover:bg-cyan-700 cursor-pointer"
+                className="auth-btn cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {isSigningUp ? (
-                  <LoaderIcon className="w-full h-5 animate-spin text-center" />
+                  <LoaderIcon className="h-5 animate-spin" />
                 ) : (
                   " Create Account"
                 )}
@@ -126,7 +128,7 @@ const SignUpPage = () => {
               Already have an account?{" "}
               <Link
                 to="/login"
-                className="font-medium text-cyan-400 hover:underline"
+                className="font-medium text-cyan-300 hover:text-cyan-200 hover:underline"
               >
                 Sign In
               </Link>

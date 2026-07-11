@@ -26,7 +26,7 @@ const ProfileHeader = () => {
   };
 
   return (
-    <header className="border-b border-white/10 bg-white/3 backdrop-blur-xl">
+    <header className="border-b border-white/10 bg-white/[0.035] backdrop-blur-2xl">
       <div className="flex items-center justify-between px-6 py-5">
         {/* Left */}
         <div className="flex items-center gap-4">
@@ -42,7 +42,7 @@ const ProfileHeader = () => {
               />
 
               {/* Online Indicator */}
-              <span className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 border-[#05070A] bg-emerald-400 shadow-[0_0_12px_rgba(74,222,128,.8)]" />
+              <span className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 border-[#05070a] bg-emerald-400 shadow-[0_0_12px_rgba(74,222,128,.8)]" />
 
               {/* Overlay */}
               <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-black/55 opacity-0 transition duration-300 group-hover:opacity-100">
@@ -96,7 +96,7 @@ const ProfileHeader = () => {
 
             hover:border-red-500/30
             hover:bg-red-500/10
-            hover:text-red-400
+            hover:text-red-300
             hover:shadow-[0_0_25px_rgba(239,68,68,.2)]
           "
         >

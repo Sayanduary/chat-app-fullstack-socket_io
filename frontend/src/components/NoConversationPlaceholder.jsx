@@ -4,15 +4,15 @@ const NoConversationPlaceholder = () => {
   return (
     <div className="relative flex h-full flex-1 items-center justify-center overflow-hidden">
       {/* Ambient Glow */}
-      <div className="absolute h-96 w-96 rounded-full bg-cyan-500/10 blur-[120px]" />
+      <div className="absolute h-96 w-96 rounded-full bg-cyan-500/8 blur-[140px]" />
 
       <div className="relative flex max-w-md flex-col items-center text-center">
         {/* Animated Icon */}
         <div className="relative mb-8">
-          <div className="absolute inset-0 rounded-full bg-cyan-500/20 blur-3xl animate-pulse" />
+          <div className="absolute inset-0 animate-pulse rounded-full bg-cyan-500/18 blur-3xl" />
 
           <div className="relative flex h-28 w-28 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] backdrop-blur-2xl shadow-[0_20px_60px_rgba(0,0,0,.45)]">
-            <MessageCircleMoreIcon className="h-14 w-14 text-cyan-400" />
+            <MessageCircleMoreIcon className="h-14 w-14 text-cyan-300" />
           </div>
         </div>
 
@@ -26,7 +26,7 @@ const NoConversationPlaceholder = () => {
         </p>
 
         <div className="mt-10 flex items-center gap-2">
-          <span className="h-2 w-2 rounded-full bg-cyan-400 animate-pulse" />
+          <span className="h-2 w-2 animate-pulse rounded-full bg-cyan-300" />
           <span className="text-sm text-slate-500">
             Waiting for a conversation...
           </span>

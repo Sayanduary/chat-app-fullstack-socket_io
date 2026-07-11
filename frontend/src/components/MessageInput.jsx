@@ -71,7 +71,7 @@ const MessageInput = () => {
   };
 
   return (
-    <div className="border-t border-slate-800/80 bg-black/40 p-4 backdrop-blur-xl">
+    <div className="border-t border-white/10 bg-black/35 p-4 backdrop-blur-2xl">
       <form
         onSubmit={handleSubmit}
         className="mx-auto flex max-w-5xl flex-col gap-3"
@@ -81,13 +81,13 @@ const MessageInput = () => {
             <img
               src={imagePreview}
               alt="Preview"
-              className="max-h-48 rounded-xl border border-slate-700 object-cover"
+              className="max-h-48 rounded-2xl border border-white/10 object-cover shadow-[0_12px_40px_rgba(0,0,0,0.35)]"
             />
 
             <button
               type="button"
               onClick={removeImage}
-              className="absolute -right-2 -top-2 rounded-full bg-slate-900 p-1 text-slate-300 transition hover:text-white"
+              className="absolute -right-2 -top-2 rounded-full border border-white/10 bg-[#05070a] p-1 text-slate-300 transition hover:text-white"
             >
               <XIcon className="h-4 w-4" />
             </button>
@@ -98,7 +98,7 @@ const MessageInput = () => {
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="rounded-xl border border-slate-700 bg-slate-900 p-3 text-slate-400 transition hover:border-cyan-500 hover:text-cyan-400"
+            className="rounded-2xl border border-white/10 bg-white/[0.04] p-3 text-slate-400 transition hover:border-cyan-400/25 hover:bg-cyan-500/10 hover:text-cyan-300"
           >
             <ImageIcon className="h-5 w-5" />
           </button>
@@ -132,7 +132,7 @@ const MessageInput = () => {
                 stopTyping();
               }
             }}
-            className="flex-1 rounded-xl border border-slate-700 bg-slate-900/80 px-4 py-3 text-slate-100 placeholder:text-slate-500 outline-none transition focus:border-cyan-500"
+            className="flex-1 rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-slate-100 placeholder:text-slate-500 outline-none transition focus:border-cyan-400/40 focus:bg-white/[0.06] focus:ring-2 focus:ring-cyan-500/15"
             onBlur={() => {
               clearTimeout(typingTimeout.current);
               stopTyping();
@@ -142,7 +142,7 @@ const MessageInput = () => {
           <button
             type="submit"
             disabled={(!text.trim() && !imagePreview) || isSendingMessage}
-            className="flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-600 text-white transition hover:bg-cyan-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-400/20 bg-gradient-to-r from-cyan-500 to-teal-400 text-white shadow-[0_16px_40px_rgba(34,211,238,0.16)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isSendingMessage ? (
               <Loader2Icon className="h-5 w-5 animate-spin" />

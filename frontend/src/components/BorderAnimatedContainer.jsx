@@ -1,8 +1,6 @@
-// How to make animated gradient border 👇
-// https://cruip-tutorials.vercel.app/animated-gradient-border/
 function BorderAnimatedContainer({ children }) {
   return (
-    <div className="w-full h-full [background:linear-gradient(45deg,#172033,--theme(--color-slate-800)_50%,#172033)_padding-box,conic-gradient(from_var(--border-angle),--theme(--color-slate-600/.48)_80%,--theme(--color-cyan-500)_86%,--theme(--color-cyan-300)_90%,--theme(--color-cyan-500)_94%,--theme(--color-slate-600/.48))_border-box] rounded-2xl border border-transparent animate-border  flex overflow-hidden">
+    <div className="flex h-full w-full overflow-hidden rounded-[32px] border border-white/10 bg-[linear-gradient(145deg,rgba(7,9,14,0.96),rgba(13,17,24,0.92))] shadow-[0_28px_120px_rgba(0,0,0,0.7)]">
       {children}
     </div>
   );

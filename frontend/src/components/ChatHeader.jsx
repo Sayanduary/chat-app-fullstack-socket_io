@@ -28,13 +28,13 @@ const ChatHeader = () => {
   if (!selectedUsers) return null;
 
   return (
-    <header className="flex h-20 items-center justify-between border-b border-slate-800/70 bg-black/40 px-6 backdrop-blur-xl">
+    <header className="flex h-20 items-center justify-between border-b border-white/10 bg-black/35 px-6 backdrop-blur-2xl">
       <div className="flex items-center gap-4">
         <div className="relative">
           <img
             src={selectedUsers.profilePic || "/avatar.png"}
             alt={selectedUsers.fullName}
-            className="h-12 w-12 rounded-full object-cover ring-2 ring-slate-700"
+            className="h-12 w-12 rounded-full object-cover ring-2 ring-white/10"
           />
 
           {isOnline && (
@@ -46,19 +46,19 @@ const ChatHeader = () => {
           <h3 className="font-semibold text-white">{selectedUsers.fullName}</h3>
 
           {isTyping ? (
-            <div className="mt-1 flex items-center gap-1 text-sm text-cyan-400">
+            <div className="mt-1 flex items-center gap-1 text-sm text-cyan-300">
               <span>Typing</span>
 
               <span className="flex gap-1">
-                <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-cyan-400"></span>
-                <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-cyan-400 [animation-delay:.15s]"></span>
-                <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-cyan-400 [animation-delay:.3s]"></span>
+                <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-cyan-300"></span>
+                <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-cyan-300 [animation-delay:.15s]"></span>
+                <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-cyan-300 [animation-delay:.3s]"></span>
               </span>
             </div>
           ) : (
             <p
               className={`mt-1 text-sm ${
-                isOnline ? "text-emerald-400" : "text-slate-500"
+                isOnline ? "text-emerald-300" : "text-slate-500"
               }`}
             >
               {isOnline ? "Online" : "Offline"}
@@ -69,7 +69,7 @@ const ChatHeader = () => {
 
       <button
         onClick={() => setSelectedUser(null)}
-        className="rounded-lg p-2 transition hover:bg-slate-800"
+        className="rounded-lg p-2 transition hover:bg-white/[0.06]"
       >
         <XIcon className="h-5 w-5 text-slate-400 hover:text-white" />
       </button>

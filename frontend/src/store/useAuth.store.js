@@ -10,11 +10,16 @@ const getSocketServerUrl = () => {
     return "http://localhost:3000";
   }
 
+  // Hardcode your fallback target domain directly instead of checking the UI origin
+  const productionApiUrl =
+    import.meta.env.VITE_API_URL || "https://ning-services.onrender.com/api";
+
   const base = normalizeUrl(
-    import.meta.env.VITE_API_URL,
-    window.location.origin,
+    productionApiUrl,
+    "https://ning-services.onrender.com/api",
   );
-  return base.replace(/\/api\/?$/, ""); // strip trailing /api for socket connection
+
+  return base.replace(/\/api\/?$/, "");
 };
 
 export const useAuthStore = create((set, get) => ({

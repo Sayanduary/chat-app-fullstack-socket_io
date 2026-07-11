@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { CameraIcon, LogOutIcon } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useAuthStore } from "../store/useAuth.store";
+import { getSafeImageSrc } from "../lib/url";
 
 const ProfileHeader = () => {
   const { logout, authUser, updateProfile } = useAuthStore();
@@ -36,7 +37,7 @@ const ProfileHeader = () => {
           >
             <div className="relative">
               <img
-                src={selectedImg || authUser?.profilePic || "/avatar.svg"}
+                src={getSafeImageSrc(selectedImg || authUser?.profilePic)}
                 alt={authUser?.fullName}
                 className="h-16 w-16 rounded-2xl border border-white/10 object-cover transition duration-300 group-hover:scale-105"
               />

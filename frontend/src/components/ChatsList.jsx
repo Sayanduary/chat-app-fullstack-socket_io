@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useChatStore } from "../store/useChatStore";
 import UsersLoadingSkeleton from "../components/UsersLoadingSkeleton";
 import NoChatsFound from "./NoChatsFound";
+import { getSafeImageSrc } from "../lib/url";
 
 const ChatsList = () => {
   const {
@@ -72,7 +73,7 @@ const ChatsList = () => {
 
             {/* Avatar */}
             <img
-              src={chat.profilePic || "/avatar.svg"}
+              src={getSafeImageSrc(chat.profilePic)}
               alt={chat.fullName}
               className="
                 h-12

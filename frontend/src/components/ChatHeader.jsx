@@ -2,6 +2,7 @@ import { XIcon } from "lucide-react";
 import { useEffect } from "react";
 import { useChatStore } from "../store/useChatStore";
 import { useAuthStore } from "../store/useAuth.store";
+import { getSafeImageSrc } from "../lib/url";
 
 const ChatHeader = () => {
   const { selectedUsers, setSelectedUser, isTyping } = useChatStore();
@@ -32,7 +33,7 @@ const ChatHeader = () => {
       <div className="flex min-w-0 items-center gap-3 sm:gap-4">
         <div className="relative">
           <img
-            src={selectedUsers.profilePic || "/avatar.svg"}
+            src={getSafeImageSrc(selectedUsers.profilePic)}
             alt={selectedUsers.fullName}
             className="h-10 w-10 rounded-full object-cover ring-2 ring-white/10 sm:h-12 sm:w-12"
           />

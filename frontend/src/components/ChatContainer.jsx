@@ -4,6 +4,7 @@ import { useChatStore } from "../store/useChatStore";
 import ChatHeader from "./ChatHeader";
 import MessageInput from "./MessageInput";
 import MessagesLoadingSkeleton from "./MessageLoadingSkeleton";
+import { getSafeImageSrc } from "../lib/url";
 
 const ChatContainer = () => {
   const {
@@ -85,7 +86,7 @@ const ChatContainer = () => {
                   >
                     {message.image && (
                       <img
-                        src={message.image}
+                        src={getSafeImageSrc(message.image)}
                         alt="attachment"
                         className="mb-2 max-w-full rounded-2xl border border-white/10 sm:max-w-xs"
                       />

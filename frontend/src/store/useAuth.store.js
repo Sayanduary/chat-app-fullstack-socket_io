@@ -3,17 +3,14 @@ import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
 import { io } from "socket.io-client";
 import { useChatStore } from "./useChatStore";
+import { normalizeUrl } from "../lib/url";
 
 const getSocketServerUrl = () => {
-  if (import.meta.env.VITE_API_URL) {
-    return import.meta.env.VITE_API_URL;
-  }
-
   if (import.meta.env.MODE === "development") {
     return "http://localhost:3000";
   }
 
-  return window.location.origin;
+  return normalizeUrl(import.meta.env.VITE_API_URL, window.location.origin);
 };
 
 export const useAuthStore = create((set, get) => ({
@@ -25,7 +22,15 @@ export const useAuthStore = create((set, get) => ({
   socket: null,
   checkAuth: async () => {
     try {
-      const res = await axiosInstance.get("/auth/check");
+      const res = await axiosInstance.get("/auth/check", {
+        validateStatus: (status) => status < 500,
+      });
+
+      if (res.status === 401) {
+        set({ authUser: null });
+        return;
+      }
+
       set({
         authUser: res.data,
       });

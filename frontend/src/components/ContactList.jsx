@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useChatStore } from "../store/useChatStore";
 import { useAuthStore } from "../store/useAuth.store";
 import UsersLoadingSkeleton from "./UsersLoadingSkeleton";
+import { getSafeImageSrc } from "../lib/url";
 
 const ContactList = () => {
   const {
@@ -70,7 +71,7 @@ const ContactList = () => {
             {/* Avatar */}
             <div className="relative shrink-0">
               <img
-                src={contact.profilePic || "/avatar.svg"}
+                src={getSafeImageSrc(contact.profilePic)}
                 alt={contact.fullName}
                 className="h-12 w-12 rounded-xl object-cover ring-1 ring-white/10 transition-transform duration-300 group-hover:scale-105"
               />

@@ -44,22 +44,22 @@ const ChatContainer = () => {
 
   if (!selectedUsers) {
     return (
-      <div className="flex flex-1 items-center justify-center text-slate-400">
+      <div className="flex flex-1 items-center justify-center px-6 text-center text-slate-400">
         Select a conversation
       </div>
     );
   }
 
   return (
-    <div className="flex h-full flex-1 flex-col overflow-hidden">
+    <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden">
       <ChatHeader />
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-6">
+      <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4 sm:px-6 sm:py-6">
         {isMessagesLoading ? (
           <MessagesLoadingSkeleton />
         ) : messages.length === 0 ? (
-          <div className="flex h-full items-center justify-center text-slate-500">
+          <div className="flex h-full items-center justify-center px-4 text-center text-slate-500">
             No messages yet.
           </div>
         ) : (
@@ -87,19 +87,19 @@ const ChatContainer = () => {
                       <img
                         src={message.image}
                         alt="attachment"
-                        className="mb-2 max-w-xs rounded-2xl border border-white/10"
+                        className="mb-2 max-w-full rounded-2xl border border-white/10 sm:max-w-xs"
                       />
                     )}
 
                     {message.text && (
-                      <p className="whitespace-pre-wrap break-words">
+                      <p className="whitespace-pre-wrap break-words text-sm leading-6 sm:text-base">
                         {message.text}
                       </p>
                     )}
 
                     <div
                       className={`mt-2 text-[11px] ${
-                        isSender ? "text-white-800/90" : "text-slate-400"
+                        isSender ? "text-cyan-100/90" : "text-slate-400"
                       }`}
                     >
                       {new Date(message.createdAt).toLocaleString([], {

@@ -71,17 +71,17 @@ const MessageInput = () => {
   };
 
   return (
-    <div className="border-t border-white/10 bg-black/35 p-4 backdrop-blur-2xl">
+    <div className="shrink-0 border-t border-white/10 bg-black/35 p-3 backdrop-blur-2xl sm:p-4">
       <form
         onSubmit={handleSubmit}
-        className="mx-auto flex max-w-5xl flex-col gap-3"
+        className="mx-auto flex max-w-5xl flex-col gap-2.5 sm:gap-3"
       >
         {imagePreview && (
           <div className="relative w-fit">
             <img
               src={imagePreview}
               alt="Preview"
-              className="max-h-48 rounded-2xl border border-white/10 object-cover shadow-[0_12px_40px_rgba(0,0,0,0.35)]"
+              className="max-h-40 rounded-2xl border border-white/10 object-cover shadow-[0_12px_40px_rgba(0,0,0,0.35)] sm:max-h-48"
             />
 
             <button
@@ -94,7 +94,7 @@ const MessageInput = () => {
           </div>
         )}
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5 sm:gap-3">
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
@@ -132,7 +132,7 @@ const MessageInput = () => {
                 stopTyping();
               }
             }}
-            className="flex-1 rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-slate-100 placeholder:text-slate-500 outline-none transition focus:border-cyan-400/40 focus:bg-white/[0.06] focus:ring-2 focus:ring-cyan-500/15"
+            className="flex-1 rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-slate-100 placeholder:text-slate-500 outline-none transition focus:border-cyan-400/40 focus:bg-white/[0.06] focus:ring-2 focus:ring-cyan-500/15 sm:text-base"
             onBlur={() => {
               clearTimeout(typingTimeout.current);
               stopTyping();
@@ -142,7 +142,7 @@ const MessageInput = () => {
           <button
             type="submit"
             disabled={(!text.trim() && !imagePreview) || isSendingMessage}
-            className="flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-400/20 bg-gradient-to-r from-cyan-500 to-teal-400 text-white shadow-[0_16px_40px_rgba(34,211,238,0.16)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex h-11 w-11 items-center justify-center rounded-2xl border border-cyan-400/20 bg-gradient-to-r from-cyan-500 to-teal-400 text-white shadow-[0_16px_40px_rgba(34,211,238,0.16)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50 sm:h-12 sm:w-12"
           >
             {isSendingMessage ? (
               <Loader2Icon className="h-5 w-5 animate-spin" />

@@ -26,7 +26,7 @@ const ProfileHeader = () => {
   };
 
   return (
-    <header className="border-b border-white/10 bg-white/[0.035] backdrop-blur-2xl">
+    <header className="sticky top-0 z-20 border-b border-white/10 bg-white/[0.035] backdrop-blur-2xl">
       <div className="flex items-center justify-between px-6 py-5">
         {/* Left */}
         <div className="flex items-center gap-4">

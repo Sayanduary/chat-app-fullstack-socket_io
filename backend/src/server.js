@@ -6,6 +6,7 @@ import { ENV } from "../env.js";
 import { connect_db } from "./lib/db.configure.js";
 import authRouter from "./routes/auth.route.js";
 import messageRouter from "./routes/message.route.js";
+import iceServersRouter from "./routes/iceServers.route.js";
 import cors from "cors";
 import { app, server } from "./lib/socket.js";
 dotenv.config();
@@ -26,6 +27,7 @@ app.use(cookieParser());
 
 app.use("/api/auth", authRouter);
 app.use("/api/messages", messageRouter);
+app.use("/api/ice-servers", iceServersRouter);
 
 app.use((err, req, res, next) => {
   console.error("Unhandled error:", err);

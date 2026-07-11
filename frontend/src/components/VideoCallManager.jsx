@@ -18,22 +18,23 @@ const VideoCallManager = () => {
     endCall,
     toggleMute,
     toggleCamera,
-    handleIncomingCall,
-    handleCallAccepted,
-    handleCallDeclined,
-    handleCallCancelled,
-    handleCallEnded,
-    handleRemoteIceCandidate,
   } = useVideoCallStore();
+
+  // Bind actions to static references so they don't break our socket side-effects
+  const handleIncomingCall = useVideoCallStore((s) => s.handleIncomingCall);
+  const handleCallAccepted = useVideoCallStore((s) => s.handleCallAccepted);
+  const handleCallDeclined = useVideoCallStore((s) => s.handleCallDeclined);
+  const handleCallCancelled = useVideoCallStore((s) => s.handleCallCancelled);
+  const handleCallEnded = useVideoCallStore((s) => s.handleCallEnded);
+  const handleRemoteIceCandidate = useVideoCallStore(
+    (s) => s.handleRemoteIceCandidate,
+  );
 
   const socket = useAuthStore((state) => state.socket);
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
 
   // Ref callbacks: assign srcObject immediately when the video element mounts.
-  // This handles both cases:
-  //   1. Stream already exists when the element mounts (callState just became 'active')
-  //   2. Stream arrives after the element is already mounted
   const setLocalVideoRef = (el) => {
     localVideoRef.current = el;
     if (el && localStream && el.srcObject !== localStream) {
@@ -48,33 +49,17 @@ const VideoCallManager = () => {
     }
   };
 
-  // Subscribe to socket events
+  // Subscribe to socket events cleanly
   useEffect(() => {
     if (!socket) return;
 
-    const onOffer = ({ offer, callerInfo }) => {
+    const onOffer = ({ offer, callerInfo }) =>
       handleIncomingCall(offer, callerInfo);
-    };
-
-    const onAccepted = ({ answer }) => {
-      handleCallAccepted(answer);
-    };
-
-    const onDeclined = () => {
-      handleCallDeclined();
-    };
-
-    const onCancelled = () => {
-      handleCallCancelled();
-    };
-
-    const onIce = ({ candidate }) => {
-      handleRemoteIceCandidate(candidate);
-    };
-
-    const onEnded = () => {
-      handleCallEnded();
-    };
+    const onAccepted = ({ answer }) => handleCallAccepted(answer);
+    const onDeclined = () => handleCallDeclined();
+    const onCancelled = () => handleCallCancelled();
+    const onIce = ({ candidate }) => handleRemoteIceCandidate(candidate);
+    const onEnded = () => handleCallEnded();
 
     socket.on("video-call-offer", onOffer);
     socket.on("video-call-accepted", onAccepted);
@@ -101,7 +86,7 @@ const VideoCallManager = () => {
     handleRemoteIceCandidate,
   ]);
 
-  // When the stream object changes (e.g. new call), update the video element if it's already mounted
+  // When the stream object modifications happen, check bounding element targets
   useEffect(() => {
     const el = localVideoRef.current;
     if (el && localStream && el.srcObject !== localStream) {
@@ -124,7 +109,6 @@ const VideoCallManager = () => {
       {callState === "ringing-outgoing" && callerInfo && (
         <div className="flex flex-col items-center max-w-sm w-full text-center">
           <div className="relative mb-8">
-            {/* Pulsing ring animation */}
             <div className="absolute inset-0 rounded-full bg-cyan-500/20 animate-ping scale-150" />
             <div className="absolute -inset-4 rounded-full border border-cyan-500/30 animate-pulse" />
             <img
@@ -133,8 +117,12 @@ const VideoCallManager = () => {
               className="relative z-10 w-32 h-32 rounded-full object-cover border-4 border-cyan-500/50 shadow-2xl shadow-cyan-500/20"
             />
           </div>
-          <h2 className="text-2xl font-bold text-white mb-2">{callerInfo.fullName}</h2>
-          <p className="text-slate-400 animate-pulse text-sm tracking-wider uppercase mb-12">Ringing...</p>
+          <h2 className="text-2xl font-bold text-white mb-2">
+            {callerInfo.fullName}
+          </h2>
+          <p className="text-slate-400 animate-pulse text-sm tracking-wider uppercase mb-12">
+            Ringing...
+          </p>
 
           <button
             onClick={cancelCall}
@@ -156,7 +144,9 @@ const VideoCallManager = () => {
               className="relative z-10 w-24 h-24 rounded-full object-cover border-4 border-emerald-500/50 shadow-lg"
             />
           </div>
-          <h2 className="text-xl font-bold text-white mb-1">{callerInfo.fullName}</h2>
+          <h2 className="text-xl font-bold text-white mb-1">
+            {callerInfo.fullName}
+          </h2>
           <p className="text-emerald-400 text-xs font-semibold uppercase tracking-wider mb-8 animate-pulse">
             Incoming Video Call...
           </p>
@@ -181,18 +171,22 @@ const VideoCallManager = () => {
       {/* 3. ACTIVE CALL SCREEN */}
       {callState === "active" && callerInfo && (
         <div className="relative w-full h-full max-w-6xl rounded-3xl overflow-hidden bg-black shadow-2xl flex flex-col items-center justify-center">
-          {/* Remote Video (Fullscreen inside container) */}
           <div className="absolute inset-0 flex items-center justify-center bg-slate-950">
-            {/* Connecting placeholder overlay */}
-            <div className={`absolute inset-0 flex flex-col items-center justify-center bg-slate-950 text-center px-4 z-10 transition-opacity duration-300 ${
-              remoteStream ? "opacity-0 pointer-events-none" : "opacity-100 pointer-events-auto"
-            }`}>
+            <div
+              className={`absolute inset-0 flex flex-col items-center justify-center bg-slate-950 text-center px-4 z-10 transition-opacity duration-300 ${
+                remoteStream
+                  ? "opacity-0 pointer-events-none"
+                  : "opacity-100 pointer-events-auto"
+              }`}
+            >
               <img
                 src={getSafeImageSrc(callerInfo.profilePic)}
                 alt={callerInfo.fullName}
                 className="w-24 h-24 rounded-full object-cover border-2 border-white/20 mb-4 animate-pulse"
               />
-              <p className="text-slate-400 text-sm animate-pulse">Connecting video stream...</p>
+              <p className="text-slate-400 text-sm animate-pulse">
+                Connecting video stream...
+              </p>
             </div>
 
             <video
@@ -203,12 +197,14 @@ const VideoCallManager = () => {
             />
           </div>
 
-          {/* Local Video (Floating overlay on top right) */}
           <div className="absolute top-4 right-4 w-32 h-44 sm:w-44 sm:h-60 rounded-2xl overflow-hidden border border-white/20 shadow-2xl z-20 bg-slate-900">
-            {/* Camera Off Placeholder Overlay */}
-            <div className={`absolute inset-0 flex flex-col items-center justify-center bg-slate-800 text-slate-400 p-2 text-center z-10 transition-opacity duration-300 ${
-              isCameraOff ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-            }`}>
+            <div
+              className={`absolute inset-0 flex flex-col items-center justify-center bg-slate-800 text-slate-400 p-2 text-center z-10 transition-opacity duration-300 ${
+                isCameraOff
+                  ? "opacity-100 pointer-events-auto"
+                  : "opacity-0 pointer-events-none"
+              }`}
+            >
               <VideoOff className="w-8 h-8 mb-2" />
               <span className="text-[10px] sm:text-xs">Camera Off</span>
             </div>
@@ -218,11 +214,10 @@ const VideoCallManager = () => {
               autoPlay
               playsInline
               muted
-              className="w-full h-full object-cover scale-x-[-1]" // Mirror local stream
+              className="w-full h-full object-cover scale-x-[-1]"
             />
           </div>
 
-          {/* Floating Caller Name Overlay (Top Left) */}
           <div className="absolute top-4 left-4 z-10 bg-black/40 border border-white/10 backdrop-blur-md px-4 py-2 rounded-xl flex items-center gap-3">
             <img
               src={getSafeImageSrc(callerInfo.profilePic)}
@@ -230,7 +225,9 @@ const VideoCallManager = () => {
               className="w-8 h-8 rounded-full object-cover"
             />
             <div>
-              <p className="text-white text-xs font-semibold">{callerInfo.fullName}</p>
+              <p className="text-white text-xs font-semibold">
+                {callerInfo.fullName}
+              </p>
               <p className="text-emerald-400 text-[10px] flex items-center gap-1.5 font-medium">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
                 Live
@@ -238,9 +235,7 @@ const VideoCallManager = () => {
             </div>
           </div>
 
-          {/* Controls Bar (Floating bottom) */}
           <div className="absolute bottom-6 z-20 bg-black/50 border border-white/10 backdrop-blur-md px-6 py-4 rounded-full flex gap-6 items-center shadow-2xl">
-            {/* Audio Toggle */}
             <button
               onClick={toggleMute}
               className={`p-3.5 rounded-full border transition-all duration-300 cursor-pointer ${
@@ -249,10 +244,13 @@ const VideoCallManager = () => {
                   : "bg-white/5 border-white/10 hover:bg-white/15 text-slate-200"
               }`}
             >
-              {isMuted ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+              {isMuted ? (
+                <MicOff className="w-5 h-5" />
+              ) : (
+                <Mic className="w-5 h-5" />
+              )}
             </button>
 
-            {/* End Call */}
             <button
               onClick={endCall}
               className="p-4 rounded-full bg-red-600 hover:bg-red-700 transition-all duration-300 shadow-[0_0_15px_rgba(220,38,38,0.5)] text-white hover:scale-105 cursor-pointer"
@@ -260,7 +258,6 @@ const VideoCallManager = () => {
               <PhoneOff className="w-6 h-6" />
             </button>
 
-            {/* Video Toggle */}
             <button
               onClick={toggleCamera}
               className={`p-3.5 rounded-full border transition-all duration-300 cursor-pointer ${
@@ -269,7 +266,11 @@ const VideoCallManager = () => {
                   : "bg-white/5 border-white/10 hover:bg-white/15 text-slate-200"
               }`}
             >
-              {isCameraOff ? <VideoOff className="w-5 h-5" /> : <Video className="w-5 h-5" />}
+              {isCameraOff ? (
+                <VideoOff className="w-5 h-5" />
+              ) : (
+                <Video className="w-5 h-5" />
+              )}
             </button>
           </div>
         </div>

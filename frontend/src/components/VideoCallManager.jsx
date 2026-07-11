@@ -30,6 +30,24 @@ const VideoCallManager = () => {
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
 
+  // Ref callbacks: assign srcObject immediately when the video element mounts.
+  // This handles both cases:
+  //   1. Stream already exists when the element mounts (callState just became 'active')
+  //   2. Stream arrives after the element is already mounted
+  const setLocalVideoRef = (el) => {
+    localVideoRef.current = el;
+    if (el && localStream && el.srcObject !== localStream) {
+      el.srcObject = localStream;
+    }
+  };
+
+  const setRemoteVideoRef = (el) => {
+    remoteVideoRef.current = el;
+    if (el && remoteStream && el.srcObject !== remoteStream) {
+      el.srcObject = remoteStream;
+    }
+  };
+
   // Subscribe to socket events
   useEffect(() => {
     if (!socket) return;
@@ -83,21 +101,18 @@ const VideoCallManager = () => {
     handleRemoteIceCandidate,
   ]);
 
-  // Bind streams to video elements
+  // When the stream object changes (e.g. new call), update the video element if it's already mounted
   useEffect(() => {
-    if (localVideoRef.current && localStream) {
-      // Only reassign srcObject if it actually changed to avoid interrupting the stream
-      if (localVideoRef.current.srcObject !== localStream) {
-        localVideoRef.current.srcObject = localStream;
-      }
+    const el = localVideoRef.current;
+    if (el && localStream && el.srcObject !== localStream) {
+      el.srcObject = localStream;
     }
   }, [localStream]);
 
   useEffect(() => {
-    if (remoteVideoRef.current && remoteStream) {
-      if (remoteVideoRef.current.srcObject !== remoteStream) {
-        remoteVideoRef.current.srcObject = remoteStream;
-      }
+    const el = remoteVideoRef.current;
+    if (el && remoteStream && el.srcObject !== remoteStream) {
+      el.srcObject = remoteStream;
     }
   }, [remoteStream]);
 
@@ -181,7 +196,7 @@ const VideoCallManager = () => {
             </div>
 
             <video
-              ref={remoteVideoRef}
+              ref={setRemoteVideoRef}
               autoPlay
               playsInline
               className="w-full h-full object-cover"
@@ -199,7 +214,7 @@ const VideoCallManager = () => {
             </div>
 
             <video
-              ref={localVideoRef}
+              ref={setLocalVideoRef}
               autoPlay
               playsInline
               muted

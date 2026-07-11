@@ -26,7 +26,7 @@ const ActiveTabSwitch = () => {
                 `
                 : `
                   text-slate-400
-                  hover:bg-white/[0.04]
+                  hover:bg-white/4
                   hover:text-white
                 `
             }

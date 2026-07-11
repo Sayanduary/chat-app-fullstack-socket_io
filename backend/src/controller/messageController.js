@@ -1,6 +1,7 @@
 import User from "../models/User.js";
 import Message from "../models/Message.js";
 import cloudinary from "../lib/cloudinary.configure.js";
+import { getReceiverSocketIds, io } from "../lib/socket.js";
 
 export const getAllContacts = async (req, res) => {
   try {
@@ -19,15 +20,15 @@ export const getMessagesByUserId = async (req, res) => {
   try {
     const myId = req.user._id;
     const { id: userToChatId } = req.params;
-    const message = await Message.find({
+
+    const messages = await Message.find({
       $or: [
         { senderId: myId, receiverId: userToChatId },
         { senderId: userToChatId, receiverId: myId },
       ],
     });
-    res.status(200).json({
-      message,
-    });
+
+    res.status(200).json(messages);
   } catch (error) {
     console.log("Error in getMessage Controller", error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -48,7 +49,7 @@ export const sendMessage = async (req, res) => {
         .json({ message: "Cannot send messages to yourself" });
     }
     const receiverExists = await User.exists({ _id: receiverId });
-    if (!recieverExists) {
+    if (!receiverExists) {
       return res.status(400).json({ message: "Receiver Not Found." });
     }
     let imageUrl;
@@ -63,7 +64,13 @@ export const sendMessage = async (req, res) => {
       image: imageUrl,
     });
     await newMessage.save();
-    //send message in real time if user is online
+    const receiverSocketIds = getReceiverSocketIds(receiverId);
+    if (receiverSocketIds.length) {
+      receiverSocketIds.forEach((receiverSocketId) => {
+        io.to(receiverSocketId).emit("newMessage", newMessage);
+      });
+    }
+
     res.status(200).json(newMessage);
   } catch (error) {
     console.log("Error in sendMessageController", error);

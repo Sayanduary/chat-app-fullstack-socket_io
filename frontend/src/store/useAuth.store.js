@@ -1,16 +1,36 @@
 import { create } from "zustand";
 import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
-export const useAuthStore = create((set) => ({
+import { io } from "socket.io-client";
+import { useChatStore } from "./useChatStore";
+
+const getSocketServerUrl = () => {
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+
+  if (import.meta.env.MODE === "development") {
+    return "http://localhost:3000";
+  }
+
+  return window.location.origin;
+};
+
+export const useAuthStore = create((set, get) => ({
   authUser: null,
   isCheckingAuth: true,
   isSigningUp: false,
   isLoggingIn: false,
   onlineUsers: [],
+  socket: null,
   checkAuth: async () => {
     try {
       const res = await axiosInstance.get("/auth/check");
-      set({ authUser: res.data });
+      set({
+        authUser: res.data,
+      });
+
+      get().connectSocket();
     } catch (error) {
       console.log("error in auth-check", error);
       set({ authUser: null });
@@ -22,7 +42,11 @@ export const useAuthStore = create((set) => ({
     set({ isSigniningUp: true });
     try {
       const res = await axiosInstance.post("/auth/signup", data);
-      set({ authUser: res.data });
+      set({
+        authUser: res.data,
+      });
+
+      get().connectSocket();
       toast.success("Account Created Successfully");
     } catch (error) {
       console.error(error.response);
@@ -36,6 +60,7 @@ export const useAuthStore = create((set) => ({
     try {
       const res = await axiosInstance.post("/auth/login", data);
       set({ authUser: res.data });
+      get().connectSocket();
       toast.success("Logged In");
     } catch (error) {
       console.log(error.response);
@@ -47,7 +72,12 @@ export const useAuthStore = create((set) => ({
   logout: async () => {
     try {
       await axiosInstance.post("/auth/logout");
-      set({ authUser: null });
+      get().disconnectSocket();
+      useChatStore.getState().resetChatState?.();
+
+      set({
+        authUser: null,
+      });
       toast.success("Succesfully Logged Out");
     } catch (error) {
       console.log(error.response);
@@ -63,5 +93,42 @@ export const useAuthStore = create((set) => ({
       console.log(error.response);
       toast.error(error.response?.data?.message || "Something Went Wrong");
     }
+  },
+  connectSocket: () => {
+    const { authUser, socket } = get();
+
+    if (!authUser || socket?.connected) return;
+
+    const newSocket = io(getSocketServerUrl(), {
+      query: {
+        userId: authUser._id,
+      },
+      withCredentials: true,
+    });
+
+    newSocket.connect();
+
+    newSocket.on("getOnlineUsers", (users) => {
+      set({
+        onlineUsers: users,
+      });
+    });
+
+    set({
+      socket: newSocket,
+    });
+  },
+
+  disconnectSocket: () => {
+    const { socket } = get();
+
+    if (socket?.connected) {
+      socket.disconnect();
+    }
+
+    set({
+      socket: null,
+      onlineUsers: [],
+    });
   },
 }));

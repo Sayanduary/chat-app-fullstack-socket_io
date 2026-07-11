@@ -7,16 +7,16 @@ const ChatsList = () => {
   const {
     getMyChatPartners,
     chats,
-    isUserLoading,
-    selectedUser,
+    isUsersLoading,
+    selectedUsers,
     setSelectedUser,
   } = useChatStore();
 
   useEffect(() => {
     getMyChatPartners();
-  }, []);
+  }, [getMyChatPartners]);
 
-  if (isUserLoading) {
+  if (isUsersLoading) {
     return <UsersLoadingSkeleton />;
   }
 
@@ -27,7 +27,7 @@ const ChatsList = () => {
   return (
     <div className="space-y-2">
       {chats.map((chat) => {
-        const isActive = selectedUser?._id === chat._id;
+        const isActive = selectedUsers?._id === chat._id;
 
         return (
           <button

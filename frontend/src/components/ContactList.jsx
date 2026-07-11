@@ -7,7 +7,7 @@ const ContactList = () => {
   const {
     getAllContacts,
     allContacts,
-    selectedUser,
+    selectedUsers,
     setSelectedUser,
     isUsersLoading,
   } = useChatStore();
@@ -16,7 +16,7 @@ const ContactList = () => {
 
   useEffect(() => {
     getAllContacts();
-  }, []);
+  }, [getAllContacts]);
 
   if (isUsersLoading) {
     return <UsersLoadingSkeleton />;
@@ -33,7 +33,7 @@ const ContactList = () => {
   return (
     <div className="space-y-2">
       {allContacts.map((contact) => {
-        const isActive = selectedUser?._id === contact._id;
+        const isActive = selectedUsers?._id === contact._id;
         const isOnline = onlineUsers.includes(contact._id);
 
         return (

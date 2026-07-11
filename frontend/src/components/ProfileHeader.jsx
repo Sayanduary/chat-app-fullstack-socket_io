@@ -1,9 +1,11 @@
 import { useRef, useState } from "react";
 import { CameraIcon, LogOutIcon } from "lucide-react";
+import { useNavigate } from "react-router";
 import { useAuthStore } from "../store/useAuth.store";
 
 const ProfileHeader = () => {
   const { logout, authUser, updateProfile } = useAuthStore();
+  const navigate = useNavigate();
 
   const [selectedImg, setSelectedImg] = useState(null);
 
@@ -70,7 +72,10 @@ const ProfileHeader = () => {
 
         {/* Right */}
         <button
-          onClick={logout}
+          onClick={async () => {
+            await logout();
+            navigate("/login");
+          }}
           className="
             flex
             h-11

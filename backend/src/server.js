@@ -7,9 +7,9 @@ import { connect_db } from "./lib/db.configure.js";
 import authRouter from "./routes/auth.route.js";
 import messageRouter from "./routes/message.route.js";
 import cors from "cors";
-
+import { app, server } from "./lib/socket.js";
 dotenv.config();
-const app = express();
+
 const __dirname = path.resolve();
 
 const PORT = ENV.PORT || 3000;
@@ -29,7 +29,7 @@ app.use("/api/messages", messageRouter);
 
 // make ready for development
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server running on ${PORT}`);
   connect_db();
 });

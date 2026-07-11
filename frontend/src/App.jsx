@@ -11,12 +11,12 @@ const App = () => {
   const { checkAuth, authUser, isCheckingAuth } = useAuthStore();
   useEffect(() => {
     checkAuth();
-  }, []);
+  }, [checkAuth]);
 
   if (isCheckingAuth) {
     return <PageLaoder />;
   }
-  console.log({ authUser });
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-black">
       {/* Grid Pattern */}

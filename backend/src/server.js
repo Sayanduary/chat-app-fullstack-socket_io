@@ -35,8 +35,13 @@ app.use((err, req, res, next) => {
 });
 // make ready for development
 
-connect_db().then(() => {
-  server.listen(PORT, () => {
-    console.log(`Server running on ${PORT}`);
+connect_db()
+  .then(() => {
+    server.listen(PORT, () => {
+      console.log(`Server running on ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error("Failed to connect to DB:", err);
+    process.exit(1);
   });
-});

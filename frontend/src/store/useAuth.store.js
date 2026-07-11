@@ -10,7 +10,11 @@ const getSocketServerUrl = () => {
     return "http://localhost:3000";
   }
 
-  return normalizeUrl(import.meta.env.VITE_API_URL, window.location.origin);
+  const base = normalizeUrl(
+    import.meta.env.VITE_API_URL,
+    window.location.origin,
+  );
+  return base.replace(/\/api\/?$/, ""); // strip trailing /api for socket connection
 };
 
 export const useAuthStore = create((set, get) => ({
@@ -44,7 +48,7 @@ export const useAuthStore = create((set, get) => ({
     }
   },
   signup: async (data) => {
-    set({ isSigniningUp: true });
+    set({ isSigningUp: true });
     try {
       const res = await axiosInstance.post("/auth/signup", data);
       set({
@@ -57,7 +61,7 @@ export const useAuthStore = create((set, get) => ({
       console.error(error.response);
       toast.error(error.response?.data?.message || "Something went wrong");
     } finally {
-      set({ isSigniningUp: false });
+      set({ isSigningUp: false });
     }
   },
   login: async (data) => {

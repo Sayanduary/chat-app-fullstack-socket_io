@@ -3,33 +3,19 @@ import { useAuthStore } from "./useAuth.store";
 import toast from "react-hot-toast";
 
 // RTCPeerConnection ICE configuration
+// Keep minimal STUN servers — browser warns if you use 5+
 const ICE_CONFIG = {
   iceServers: [
     {
       urls: [
         "stun:stun.l.google.com:19302",
         "stun:stun1.l.google.com:19302",
-        "stun:stun2.l.google.com:19302",
-        "stun:stun3.l.google.com:19302",
-        "stun:stun4.l.google.com:19302",
       ],
     },
-    // Free TURN servers for NAT traversal
-    {
-      urls: "turn:openrelay.metered.ca:80",
-      username: "openrelayproject",
-      credential: "openrelayproject",
-    },
-    {
-      urls: "turn:openrelay.metered.ca:443",
-      username: "openrelayproject",
-      credential: "openrelayproject",
-    },
-    {
-      urls: "turn:openrelay.metered.ca:443?transport=tcp",
-      username: "openrelayproject",
-      credential: "openrelayproject",
-    },
+    // NOTE: Add a real TURN server here for users behind strict NATs.
+    // Free options like openrelay.metered.ca are unreliable.
+    // Recommended: get free credentials at https://www.metered.ca/tools/openrelay/
+    // or self-host coturn.
   ],
   iceCandidatePoolSize: 10,
 };
@@ -129,13 +115,15 @@ let pendingIceCandidates = [];
  * @param {import('socket.io-client').Socket} opts.socket
  * @param {string} opts.targetId
  * @param {(stream: MediaStream) => void} opts.onRemoteTrack  - called when tracks arrive
- * @param {(state: string) => void} opts.onIceStateChange
+ * @param {() => void} opts.onFatalFailure - called only when the connection is truly unrecoverable
  */
-function buildPeerConnection({ socket, targetId, onRemoteTrack, onIceStateChange }) {
+function buildPeerConnection({ socket, targetId, onRemoteTrack, onFatalFailure }) {
   const pc = new RTCPeerConnection(ICE_CONFIG);
 
   // Single stable MediaStream — tracks are added to it, the object reference never changes
   const remoteMediaStream = new MediaStream();
+  let iceRestartAttempts = 0;
+  const MAX_ICE_RESTARTS = 3;
 
   pc.onicecandidate = (event) => {
     if (event.candidate) {
@@ -158,16 +146,34 @@ function buildPeerConnection({ socket, targetId, onRemoteTrack, onIceStateChange
   };
 
   pc.oniceconnectionstatechange = () => {
-    console.log("[WebRTC] ICE state:", pc.iceConnectionState);
-    if (pc.iceConnectionState === "failed") {
-      console.warn("[WebRTC] ICE failed — attempting restartIce()...");
-      try { pc.restartIce(); } catch (e) { console.error(e); }
+    const state = pc.iceConnectionState;
+    console.log("[WebRTC] ICE state:", state);
+
+    if (state === "disconnected") {
+      // Temporary blip — often self-recovers within seconds. Just log it.
+      console.warn("[WebRTC] ICE temporarily disconnected, waiting for recovery...");
     }
-    if (onIceStateChange) onIceStateChange(pc.iceConnectionState);
+
+    if (state === "failed") {
+      if (iceRestartAttempts < MAX_ICE_RESTARTS) {
+        iceRestartAttempts++;
+        console.warn(`[WebRTC] ICE failed — restart attempt ${iceRestartAttempts}/${MAX_ICE_RESTARTS}`);
+        try { pc.restartIce(); } catch (e) { console.error("restartIce failed:", e); }
+      } else {
+        console.error("[WebRTC] ICE failed after max restart attempts. Ending call.");
+        if (onFatalFailure) onFatalFailure();
+      }
+    }
   };
 
+  // Connection state 'failed' means ICE restart also gave up — this is the true fatal signal
   pc.onconnectionstatechange = () => {
-    console.log("[WebRTC] Connection state:", pc.connectionState);
+    const state = pc.connectionState;
+    console.log("[WebRTC] Connection state:", state);
+    if (state === "failed") {
+      console.error("[WebRTC] Connection failed permanently. Ending call.");
+      if (onFatalFailure) onFatalFailure();
+    }
   };
 
   return { pc, remoteMediaStream };
@@ -206,11 +212,9 @@ export const useVideoCallStore = create((set, get) => ({
             set({ remoteStream: ms });
           }
         },
-        onIceStateChange: (state) => {
-          if (state === "failed") {
-            toast.error("Video connection failed. Please try again.");
-            get().resetCallState();
-          }
+        onFatalFailure: () => {
+          toast.error("Video connection lost. Please call again.");
+          get().resetCallState();
         },
       });
 
@@ -272,11 +276,9 @@ export const useVideoCallStore = create((set, get) => ({
             set({ remoteStream: ms });
           }
         },
-        onIceStateChange: (state) => {
-          if (state === "failed") {
-            toast.error("Video connection failed. Please try again.");
-            get().resetCallState();
-          }
+        onFatalFailure: () => {
+          toast.error("Video connection lost. Please call again.");
+          get().resetCallState();
         },
       });
 

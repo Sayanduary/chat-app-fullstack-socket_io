@@ -123,11 +123,13 @@ export const login = async (req, res) => {
 };
 
 export const logout = async (req, res) => {
+  const isProduction = ENV.NODE_ENV === "production";
+
   res.cookie("jwt", "", {
     maxAge: 0,
     httpOnly: true,
-    sameSite: "strict",
-    secure: ENV.NODE_ENV !== "development",
+    sameSite: isProduction ? "none" : "lax",
+    secure: isProduction,
     path: "/",
   });
   res.status(200).json({ message: "user logged out succesfully" });

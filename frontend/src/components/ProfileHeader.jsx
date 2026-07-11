@@ -36,7 +36,7 @@ const ProfileHeader = () => {
           >
             <div className="relative">
               <img
-                src={selectedImg || authUser?.profilePic || "/avatar.png"}
+                src={selectedImg || authUser?.profilePic || "/avatar.svg"}
                 alt={authUser?.fullName}
                 className="h-16 w-16 rounded-2xl border border-white/10 object-cover transition duration-300 group-hover:scale-105"
               />

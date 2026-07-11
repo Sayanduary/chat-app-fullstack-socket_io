@@ -70,7 +70,7 @@ const ContactList = () => {
             {/* Avatar */}
             <div className="relative shrink-0">
               <img
-                src={contact.profilePic || "/avatar.png"}
+                src={contact.profilePic || "/avatar.svg"}
                 alt={contact.fullName}
                 className="h-12 w-12 rounded-xl object-cover ring-1 ring-white/10 transition-transform duration-300 group-hover:scale-105"
               />

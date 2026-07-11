@@ -72,7 +72,7 @@ const ChatsList = () => {
 
             {/* Avatar */}
             <img
-              src={chat.profilePic || "/avatar.png"}
+              src={chat.profilePic || "/avatar.svg"}
               alt={chat.fullName}
               className="
                 h-12

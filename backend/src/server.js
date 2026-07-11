@@ -15,7 +15,7 @@ const __dirname = path.resolve();
 const PORT = ENV.PORT || 3000;
 app.use(
   cors({
-    origin: ENV.CLIENT_URL,
+    origin: true,
     credentials: true,
   }),
 );

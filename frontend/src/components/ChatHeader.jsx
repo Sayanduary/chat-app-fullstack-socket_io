@@ -1,16 +1,28 @@
-import { XIcon } from "lucide-react";
+import { XIcon, Video } from "lucide-react";
 import { useEffect } from "react";
 import { useChatStore } from "../store/useChatStore";
 import { useAuthStore } from "../store/useAuth.store";
 import { getSafeImageSrc } from "../lib/url";
+import { useVideoCallStore } from "../store/useVideoCallStore";
+import toast from "react-hot-toast";
 
 const ChatHeader = () => {
   const { selectedUsers, setSelectedUser, isTyping } = useChatStore();
   const { onlineUsers } = useAuthStore();
+  const { startCall } = useVideoCallStore();
 
   const isOnline = selectedUsers
     ? onlineUsers.includes(selectedUsers._id)
     : false;
+
+  const handleVideoCall = () => {
+    if (!selectedUsers) return;
+    if (!isOnline) {
+      toast.error(`${selectedUsers.fullName} is offline`);
+      return;
+    }
+    startCall(selectedUsers);
+  };
 
   useEffect(() => {
     const handleEscKey = (event) => {
@@ -70,12 +82,22 @@ const ChatHeader = () => {
         </div>
       </div>
 
-      <button
-        onClick={() => setSelectedUser(null)}
-        className="rounded-lg p-2 transition hover:bg-white/[0.06] sm:p-2.5"
-      >
-        <XIcon className="h-4 w-4 text-slate-400 hover:text-white sm:h-5 sm:w-5" />
-      </button>
+      <div className="flex items-center gap-2">
+        <button
+          onClick={handleVideoCall}
+          className="rounded-lg p-2 transition hover:bg-white/[0.06] text-slate-400 hover:text-cyan-400 sm:p-2.5 cursor-pointer"
+          title="Video Call"
+        >
+          <Video className="h-5 w-5 sm:h-5.5 sm:w-5.5" />
+        </button>
+
+        <button
+          onClick={() => setSelectedUser(null)}
+          className="rounded-lg p-2 transition hover:bg-white/[0.06] sm:p-2.5 cursor-pointer"
+        >
+          <XIcon className="h-4 w-4 text-slate-400 hover:text-white sm:h-5 sm:w-5" />
+        </button>
+      </div>
     </header>
   );
 };

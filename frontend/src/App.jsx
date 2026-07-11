@@ -6,6 +6,7 @@ import { useAuthStore } from "./store/useAuth.store";
 import { useEffect } from "react";
 import PageLaoder from "./components/PageLaoder";
 import { Toaster } from "react-hot-toast";
+import VideoCallManager from "./components/VideoCallManager";
 
 const App = () => {
   const { checkAuth, authUser, isCheckingAuth } = useAuthStore();
@@ -41,6 +42,7 @@ const App = () => {
           />
         </Routes>
         <Toaster />
+        {authUser && <VideoCallManager />}
       </div>
     </div>
   );

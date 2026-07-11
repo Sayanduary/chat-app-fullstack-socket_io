@@ -27,9 +27,16 @@ app.use(cookieParser());
 app.use("/api/auth", authRouter);
 app.use("/api/messages", messageRouter);
 
+app.use((err, req, res, next) => {
+  console.error("Unhandled error:", err);
+  res.status(err.status || 500).json({
+    message: err.message || "Internal server error",
+  });
+});
 // make ready for development
 
-server.listen(PORT, () => {
-  console.log(`Server running on ${PORT}`);
-  connect_db();
+connect_db().then(() => {
+  server.listen(PORT, () => {
+    console.log(`Server running on ${PORT}`);
+  });
 });

@@ -10,9 +10,28 @@ const ICE_CONFIG = {
         "stun:stun.l.google.com:19302",
         "stun:stun1.l.google.com:19302",
         "stun:stun2.l.google.com:19302",
+        "stun:stun3.l.google.com:19302",
+        "stun:stun4.l.google.com:19302",
       ],
     },
+    // Free TURN servers for NAT traversal (prevents freeze on restricted networks)
+    {
+      urls: "turn:openrelay.metered.ca:80",
+      username: "openrelayproject",
+      credential: "openrelayproject",
+    },
+    {
+      urls: "turn:openrelay.metered.ca:443",
+      username: "openrelayproject",
+      credential: "openrelayproject",
+    },
+    {
+      urls: "turn:openrelay.metered.ca:443?transport=tcp",
+      username: "openrelayproject",
+      credential: "openrelayproject",
+    },
   ],
+  iceCandidatePoolSize: 10,
 };
 
 class RingtoneManager {
@@ -157,8 +176,16 @@ export const useVideoCallStore = create((set, get) => ({
       };
 
       // Handle remote stream tracks
+      // Use a stable MediaStream so React doesn't re-render and reset the video srcObject
+      const remoteStream = new MediaStream();
+      set({ remoteStream });
       pc.ontrack = (event) => {
-        set({ remoteStream: event.streams[0] });
+        event.streams[0].getTracks().forEach((track) => {
+          // Avoid adding duplicate tracks
+          if (!remoteStream.getTrackById(track.id)) {
+            remoteStream.addTrack(track);
+          }
+        });
       };
 
       // Create offer
@@ -175,6 +202,26 @@ export const useVideoCallStore = create((set, get) => ({
           profilePic: authUser.profilePic,
         },
       });
+
+      // Monitor ICE connection state to detect and handle failures
+      pc.oniceconnectionstatechange = () => {
+        console.log("[WebRTC] ICE connection state:", pc.iceConnectionState);
+        if (pc.iceConnectionState === "failed") {
+          console.warn("[WebRTC] ICE connection failed, attempting restart...");
+          pc.restartIce();
+        }
+        if (pc.iceConnectionState === "disconnected") {
+          console.warn("[WebRTC] ICE disconnected, waiting for reconnect...");
+        }
+      };
+
+      pc.onconnectionstatechange = () => {
+        console.log("[WebRTC] Peer connection state:", pc.connectionState);
+        if (pc.connectionState === "failed") {
+          toast.error("Video connection failed. Please try again.");
+          get().resetCallState();
+        }
+      };
 
       set({ peerConnection: pc });
     } catch (error) {
@@ -234,8 +281,15 @@ export const useVideoCallStore = create((set, get) => ({
         }
       };
 
+      // Use a stable MediaStream so React doesn't re-render and reset the video srcObject
+      const remoteStream = new MediaStream();
+      set({ remoteStream });
       pc.ontrack = (event) => {
-        set({ remoteStream: event.streams[0] });
+        event.streams[0].getTracks().forEach((track) => {
+          if (!remoteStream.getTrackById(track.id)) {
+            remoteStream.addTrack(track);
+          }
+        });
       };
 
       // Set offer description
@@ -259,6 +313,26 @@ export const useVideoCallStore = create((set, get) => ({
         }
       }
       pendingIceCandidates = [];
+
+      // Monitor ICE connection state
+      pc.oniceconnectionstatechange = () => {
+        console.log("[WebRTC] ICE connection state:", pc.iceConnectionState);
+        if (pc.iceConnectionState === "failed") {
+          console.warn("[WebRTC] ICE connection failed, attempting restart...");
+          pc.restartIce();
+        }
+        if (pc.iceConnectionState === "disconnected") {
+          console.warn("[WebRTC] ICE disconnected, waiting for reconnect...");
+        }
+      };
+
+      pc.onconnectionstatechange = () => {
+        console.log("[WebRTC] Peer connection state:", pc.connectionState);
+        if (pc.connectionState === "failed") {
+          toast.error("Video connection failed. Please try again.");
+          get().resetCallState();
+        }
+      };
 
       set({ peerConnection: pc });
     } catch (error) {

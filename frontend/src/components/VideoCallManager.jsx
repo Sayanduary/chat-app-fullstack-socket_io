@@ -86,15 +86,20 @@ const VideoCallManager = () => {
   // Bind streams to video elements
   useEffect(() => {
     if (localVideoRef.current && localStream) {
-      localVideoRef.current.srcObject = localStream;
+      // Only reassign srcObject if it actually changed to avoid interrupting the stream
+      if (localVideoRef.current.srcObject !== localStream) {
+        localVideoRef.current.srcObject = localStream;
+      }
     }
-  }, [localStream, callState]);
+  }, [localStream]);
 
   useEffect(() => {
     if (remoteVideoRef.current && remoteStream) {
-      remoteVideoRef.current.srcObject = remoteStream;
+      if (remoteVideoRef.current.srcObject !== remoteStream) {
+        remoteVideoRef.current.srcObject = remoteStream;
+      }
     }
-  }, [remoteStream, callState]);
+  }, [remoteStream]);
 
   if (callState === "idle") return null;
 
